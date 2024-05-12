@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0, 0%, 100%;
+    --foreground: 0, 0%, 20%;
+    --accent: 21, 84%, 62%;
+    --accent2: 21, 84%, 62%;
+
+    --sugar-milk: 0, 67%, 98%;
+    --cotton-ball: 221, 76%, 95%;
+    --emerald: 124, 94%, 74%;
+    --seafoam: 152, 60%, 83%;
+
+    --radius: 1rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: 0, 0%, 0%;
+      --foreground: 219, 83%, 95%;
+      --accent: 124, 94%, 74%;
+      --accent2: 124, 94%, 74%;
+    }
+  }
+}
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color: var(--foreground);
+  background-color: var(--background);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-height: 100vh;
+}
+
+.card-face {
+  margin: 5ch;
+  border: solid 1px black;
+  height: 88mm;
+  width: 63mm;
+  /* 88mm/10 * (96 / 2.54) */
+  /* aspect-ratio: 63/88; */
+}
+
+/* * {
+  @apply border border-red-500;
+} */
