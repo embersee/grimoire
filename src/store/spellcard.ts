@@ -4,18 +4,21 @@ import { create } from "zustand";
 type Parameters = {
   border: {
     borderColor: string;
-    borderStyle: string;
+    borderStyle: string; // todo: later
     borderWidth: number;
     borderRadius: number;
   };
   background: {
     backgroundColor: string;
-    backgroundImage: string;
-    backgroundSize: string;
-    backgroundPosition: string;
+    backgroundImage: string; // maybe
+    backgroundSize: string; // later
+    backgroundPosition: string; // maybe
   };
   cardLayout: {
-    cardSize: string;
+    cardSize: {
+      x: number;
+      y: number;
+    };
     cardOrientation: string;
     margins: number;
     padding: number;
@@ -138,7 +141,7 @@ const useSpellCardStore = create<SpellCardState>((set) => ({
       backgroundPosition: "center",
     },
     cardLayout: {
-      cardSize: "A4",
+      cardSize: { x: 63, y: 88 },
       cardOrientation: "portrait",
       margins: 10,
       padding: 5,

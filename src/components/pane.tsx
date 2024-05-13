@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
-import useSpellCardStore from "../store/spellcard";
 import { Pane } from "tweakpane";
+import useSpellCardStore from "../store/spellcard";
+import * as TextareaPlugin from "@pangenerator/tweakpane-textarea-plugin";
 
 export default function SpellCardPane() {
   const { parameters, setParameters } = useSpellCardStore();
@@ -16,25 +17,30 @@ export default function SpellCardPane() {
     }
 
     const pane = new Pane({
-      title: "Parameters",
+      title: "Spell Card Parameters",
     });
+
     paneRef.current.appendChild(pane.element);
+
+    pane.registerPlugin(TextareaPlugin);
 
     // Add tabs for categories
     const tabs = pane.addTab({
       pages: [
+        { title: "Spell Details" },
         { title: "Border" },
         { title: "Background" },
         { title: "Card Layout" },
         { title: "Icons/Graphics" },
-        { title: "Export Options" },
-        { title: "Spell Details" },
+        { title: "Export Preset" },
       ],
     });
 
     // Border category
     // Border Width
-    tabs.pages[0]
+
+    const borderPageOrder = 1;
+    tabs.pages[borderPageOrder]
       .addBinding(parameters.border, "borderWidth", {
         step: 1,
         min: 0,
@@ -48,7 +54,7 @@ export default function SpellCardPane() {
       });
 
     // Border Color
-    tabs.pages[0]
+    tabs.pages[borderPageOrder]
       .addBinding(parameters.border, "borderColor")
       .on("change", (v) => {
         setParameters({
@@ -57,9 +63,25 @@ export default function SpellCardPane() {
         });
       });
 
+    // Border Radius
+    tabs.pages[borderPageOrder]
+      .addBinding(parameters.border, "borderRadius", {
+        step: 1,
+        min: 0,
+        max: 100,
+      })
+      .on("change", (v) => {
+        setParameters({
+          ...parameters,
+          border: { ...parameters.border, borderRadius: v.value },
+        });
+      });
+
     // Background category
     // Background Color
-    tabs.pages[1]
+
+    const backgroundPageOrder = 2;
+    tabs.pages[backgroundPageOrder]
       .addBinding(parameters.background, "backgroundColor")
       .on("change", (v) => {
         setParameters({
@@ -69,7 +91,7 @@ export default function SpellCardPane() {
       });
 
     // Background Image
-    tabs.pages[1]
+    tabs.pages[backgroundPageOrder]
       .addBinding(parameters.background, "backgroundImage")
       .on("change", (v) => {
         setParameters({
@@ -80,8 +102,13 @@ export default function SpellCardPane() {
 
     // Card Layout category
     // Card Size
-    tabs.pages[2]
-      .addBinding(parameters.cardLayout, "cardSize")
+
+    const cardLayoutPageOrder = 3;
+    tabs.pages[cardLayoutPageOrder]
+      .addBinding(parameters.cardLayout, "cardSize", {
+        y: { min: 0, max: 210 },
+        x: { min: 0, max: 210 },
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
@@ -90,7 +117,7 @@ export default function SpellCardPane() {
       });
 
     // Card Orientation
-    tabs.pages[2]
+    tabs.pages[cardLayoutPageOrder]
       .addBinding(parameters.cardLayout, "cardOrientation")
       .on("change", (v) => {
         setParameters({
@@ -100,7 +127,7 @@ export default function SpellCardPane() {
       });
 
     // Margins
-    tabs.pages[2]
+    tabs.pages[cardLayoutPageOrder]
       .addBinding(parameters.cardLayout, "margins", {
         step: 1,
         min: 0,
@@ -114,7 +141,7 @@ export default function SpellCardPane() {
       });
 
     // Padding
-    tabs.pages[2]
+    tabs.pages[cardLayoutPageOrder]
       .addBinding(parameters.cardLayout, "padding", {
         step: 1,
         min: 0,
@@ -128,8 +155,10 @@ export default function SpellCardPane() {
       });
 
     // Icons/Graphics category
+
+    const graphicsPageOrder = 4;
     // Spell Icons
-    tabs.pages[3]
+    tabs.pages[graphicsPageOrder]
       .addBinding(parameters.iconsGraphics, "spellIcon")
       .on("change", (v) => {
         setParameters({
@@ -138,69 +167,68 @@ export default function SpellCardPane() {
         });
       });
 
-    // Export Options category
+    // Export Preset category
+
+    const exportPageOrder = 5;
     // Output Format
-    tabs.pages[4].addBinding(parameters, "outputFormat").on("change", (v) => {
-      setParameters({
-        ...parameters,
-        outputFormat: v.value,
-      });
+    //TODO: add info dump explaining
+
+    const exportBtn = tabs.pages[exportPageOrder].addButton({
+      title: "Export Preset to clipboard",
     });
 
-    // Save as PDF
-    tabs.pages[4]
-      .addBinding(parameters.exportOptions, "saveAsPDF")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          exportOptions: { ...parameters.exportOptions, saveAsPDF: v.value },
-        });
-      });
+    exportBtn.on("click", () => {
+      const state = pane.exportState();
+      console.log(state);
+      navigator.clipboard.writeText(JSON.stringify(state));
+    });
 
-    // Save as Image
-    tabs.pages[4]
-      .addBinding(parameters.exportOptions, "saveAsImage")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          exportOptions: { ...parameters.exportOptions, saveAsImage: v.value },
-        });
-      });
+    // const importBtn = tabs.pages[exportPageOrder].addButton({
+    //   title: "Import Preset",
+    // });
+    // importBtn.on("click", async () => {
+    //   const state = await navigator.clipboard.readText();
+    //   pane.importState(JSON.parse(state));
+    // });
 
     // Spell Details tabs
-    const folderGeneralStyle = tabs.pages[5].addFolder({
+    const spellDetailsPageOrder = 0;
+
+    const folderGeneralStyle = tabs.pages[spellDetailsPageOrder].addFolder({
       title: "General",
     });
-    const folderSpellName = tabs.pages[5].addFolder({ title: "Spell Name" });
-    const folderSpellLevel = tabs.pages[5].addFolder({
+    const folderSpellName = tabs.pages[spellDetailsPageOrder].addFolder({
+      title: "Spell Name",
+    });
+    const folderSpellLevel = tabs.pages[spellDetailsPageOrder].addFolder({
       title: "Spell Level",
       expanded: false,
     });
-    const folderSchoolOfMagic = tabs.pages[5].addFolder({
+    const folderSchoolOfMagic = tabs.pages[spellDetailsPageOrder].addFolder({
       title: "School of Magic",
       expanded: false,
     });
-    const folderCastingTime = tabs.pages[5].addFolder({
+    const folderCastingTime = tabs.pages[spellDetailsPageOrder].addFolder({
       title: "Casting Time",
       expanded: false,
     });
-    const folderRange = tabs.pages[5].addFolder({
+    const folderRange = tabs.pages[spellDetailsPageOrder].addFolder({
       title: "Range",
       expanded: false,
     });
-    const folderComponents = tabs.pages[5].addFolder({
+    const folderComponents = tabs.pages[spellDetailsPageOrder].addFolder({
       title: "Components",
       expanded: false,
     });
-    const folderDuration = tabs.pages[5].addFolder({
+    const folderDuration = tabs.pages[spellDetailsPageOrder].addFolder({
       title: "Duration",
       expanded: false,
     });
-    const folderSpellDescription = tabs.pages[5].addFolder({
+    const folderSpellDescription = tabs.pages[spellDetailsPageOrder].addFolder({
       title: "Spell Description",
       expanded: false,
     });
-    const folderAdditionalNotes = tabs.pages[5].addFolder({
+    const folderAdditionalNotes = tabs.pages[spellDetailsPageOrder].addFolder({
       title: "Additional Notes",
       expanded: false,
     });
@@ -649,7 +677,11 @@ export default function SpellCardPane() {
     // ####################################################################################################################
 
     folderSpellDescription
-      .addBinding(parameters.spellDescription, "text")
+      .addBinding(parameters.spellDescription, "text", {
+        view: "textarea",
+        rows: 6,
+        placeholder: "Type here...",
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
@@ -783,5 +815,5 @@ export default function SpellCardPane() {
       });
   }, []);
 
-  return <div ref={paneRef}></div>;
+  return <div className="spellcard-pane" ref={paneRef}></div>;
 }
