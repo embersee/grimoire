@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { Pane } from "tweakpane";
 import useSpellCardStore from "../store/spellcard";
 import * as TextareaPlugin from "@pangenerator/tweakpane-textarea-plugin";
+import * as EssentialsPlugin from "@tweakpane/plugin-essentials";
 
 export default function SpellCardPane() {
   const { parameters, setParameters } = useSpellCardStore();
@@ -22,12 +23,14 @@ export default function SpellCardPane() {
 
     paneRef.current.appendChild(pane.element);
 
+    pane.registerPlugin(EssentialsPlugin);
     pane.registerPlugin(TextareaPlugin);
 
     // Add tabs for categories
     const tabs = pane.addTab({
       pages: [
         { title: "Spell Details" },
+        { title: "Face" },
         { title: "Border" },
         { title: "Background" },
         { title: "Card Layout" },
@@ -36,10 +39,101 @@ export default function SpellCardPane() {
       ],
     });
 
+    const facePageOrder = 1;
+    const borderPageOrder = 2;
+    const backgroundPageOrder = 3;
+    const cardLayoutPageOrder = 4;
+    const graphicsPageOrder = 5;
+    const exportPageOrder = 6;
+
+    const faceFolderBorder = tabs.pages[facePageOrder].addFolder({
+      title: "Border",
+    });
+
+    faceFolderBorder
+      .addBinding(parameters.face, "borderColor")
+      .on("change", (v) => {
+        setParameters({
+          ...parameters,
+          face: { ...parameters.face, borderColor: v.value },
+        });
+      });
+    faceFolderBorder
+      .addBinding(parameters.face, "borderRadius", {
+        step: 1,
+        min: 0,
+        max: 100,
+      })
+      .on("change", (v) => {
+        setParameters({
+          ...parameters,
+          face: { ...parameters.face, borderRadius: v.value },
+        });
+      });
+    faceFolderBorder
+      .addBinding(parameters.face, "borderWidth", {
+        step: 1,
+        min: 0,
+        max: 100,
+      })
+      .on("change", (v) => {
+        setParameters({
+          ...parameters,
+          face: {
+            ...parameters.face,
+            borderWidth: v.value,
+          },
+        });
+      });
+    tabs.pages[facePageOrder]
+      .addBinding(parameters.face, "offset", {
+        step: 1,
+        min: -300,
+        max: 300,
+      })
+      .on("change", (v) => {
+        setParameters({
+          ...parameters,
+          face: { ...parameters.face, offset: v.value },
+        });
+      });
+    tabs.pages[facePageOrder]
+      .addBinding(parameters.face, "color")
+      .on("change", (v) => {
+        setParameters({
+          ...parameters,
+          face: {
+            ...parameters.face,
+            color: v.value,
+          },
+        });
+      });
+    tabs.pages[facePageOrder]
+      .addBinding(parameters.face, "backgroundColor")
+      .on("change", (v) => {
+        setParameters({
+          ...parameters,
+          face: {
+            ...parameters.face,
+            backgroundColor: v.value,
+          },
+        });
+      });
+    tabs.pages[facePageOrder]
+      .addBinding(parameters.face, "size", {
+        step: 0.2,
+        y: { min: 0, max: parameters.cardLayout.cardSize.y },
+        x: { min: 0, max: parameters.cardLayout.cardSize.x },
+      })
+      .on("change", (v) => {
+        setParameters({
+          ...parameters,
+          face: { ...parameters.face, size: v.value },
+        });
+      });
+
     // Border category
     // Border Width
-
-    const borderPageOrder = 1;
     tabs.pages[borderPageOrder]
       .addBinding(parameters.border, "borderWidth", {
         step: 1,
@@ -49,7 +143,14 @@ export default function SpellCardPane() {
       .on("change", (v) => {
         setParameters({
           ...parameters,
-          border: { ...parameters.border, borderWidth: v.value },
+          border: {
+            ...parameters.border,
+            borderWidth: v.value,
+            topBorderWidth: v.value,
+            rightBorderWidth: v.value,
+            bottomBorderWidth: v.value,
+            leftBorderWidth: v.value,
+          },
         });
       });
 
@@ -77,10 +178,58 @@ export default function SpellCardPane() {
         });
       });
 
+    tabs.pages[borderPageOrder]
+      .addBinding(parameters.border, "topBorderWidth", {
+        step: 1,
+        min: 0,
+        max: 100,
+      })
+      .on("change", (v) => {
+        setParameters({
+          ...parameters,
+          border: { ...parameters.border, topBorderWidth: v.value },
+        });
+      });
+    tabs.pages[borderPageOrder]
+      .addBinding(parameters.border, "leftBorderWidth", {
+        step: 1,
+        min: 0,
+        max: 100,
+      })
+      .on("change", (v) => {
+        setParameters({
+          ...parameters,
+          border: { ...parameters.border, leftBorderWidth: v.value },
+        });
+      });
+    tabs.pages[borderPageOrder]
+      .addBinding(parameters.border, "bottomBorderWidth", {
+        step: 1,
+        min: 0,
+        max: 100,
+      })
+      .on("change", (v) => {
+        setParameters({
+          ...parameters,
+          border: { ...parameters.border, bottomBorderWidth: v.value },
+        });
+      });
+    tabs.pages[borderPageOrder]
+      .addBinding(parameters.border, "rightBorderWidth", {
+        step: 1,
+        min: 0,
+        max: 100,
+      })
+      .on("change", (v) => {
+        setParameters({
+          ...parameters,
+          border: { ...parameters.border, rightBorderWidth: v.value },
+        });
+      });
+
     // Background category
     // Background Color
 
-    const backgroundPageOrder = 2;
     tabs.pages[backgroundPageOrder]
       .addBinding(parameters.background, "backgroundColor")
       .on("change", (v) => {
@@ -103,7 +252,6 @@ export default function SpellCardPane() {
     // Card Layout category
     // Card Size
 
-    const cardLayoutPageOrder = 3;
     tabs.pages[cardLayoutPageOrder]
       .addBinding(parameters.cardLayout, "cardSize", {
         y: { min: 0, max: 210 },
@@ -118,7 +266,12 @@ export default function SpellCardPane() {
 
     // Card Orientation
     tabs.pages[cardLayoutPageOrder]
-      .addBinding(parameters.cardLayout, "cardOrientation")
+      .addBinding(parameters.cardLayout, "cardOrientation", {
+        options: {
+          vertical: "vertical",
+          horizontal: "horizonal",
+        },
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
@@ -156,7 +309,6 @@ export default function SpellCardPane() {
 
     // Icons/Graphics category
 
-    const graphicsPageOrder = 4;
     // Spell Icons
     tabs.pages[graphicsPageOrder]
       .addBinding(parameters.iconsGraphics, "spellIcon")
@@ -169,9 +321,7 @@ export default function SpellCardPane() {
 
     // Export Preset category
 
-    const exportPageOrder = 5;
     // Output Format
-    //TODO: add info dump explaining
 
     const exportBtn = tabs.pages[exportPageOrder].addButton({
       title: "Export Preset to clipboard",
@@ -228,51 +378,70 @@ export default function SpellCardPane() {
       title: "Spell Description",
       expanded: false,
     });
+    const folderClass = tabs.pages[spellDetailsPageOrder].addFolder({
+      title: "Class",
+      expanded: false,
+    });
     const folderAdditionalNotes = tabs.pages[spellDetailsPageOrder].addFolder({
-      title: "Additional Notes",
+      title: "AdditionalNotes",
       expanded: false,
     });
 
     // General Spell Style
     // ####################################################################################################################
     folderGeneralStyle
-      .addBinding(parameters.spellName, "fontStyle")
+      .addBinding(parameters.generalSpellStyle, "fontStyle")
       .on("change", (v) => {
         setParameters({
           ...parameters,
-          spellName: { ...parameters.spellName, fontStyle: v.value },
+          generalSpellStyle: {
+            ...parameters.generalSpellStyle,
+            fontStyle: v.value,
+          },
         });
       });
     folderGeneralStyle
-      .addBinding(parameters.spellName, "fontSize")
+      .addBinding(parameters.generalSpellStyle, "fontSize", {
+        step: 1,
+        min: 0,
+        max: 50,
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
-          spellName: { ...parameters.spellName, fontSize: v.value },
+          generalSpellStyle: {
+            ...parameters.generalSpellStyle,
+            fontSize: v.value,
+          },
         });
       });
     folderGeneralStyle
-      .addBinding(parameters.spellName, "color")
+      .addBinding(parameters.generalSpellStyle, "color")
       .on("change", (v) => {
         setParameters({
           ...parameters,
-          spellName: { ...parameters.spellName, color: v.value },
+          generalSpellStyle: {
+            ...parameters.generalSpellStyle,
+            color: v.value,
+          },
         });
       });
     folderGeneralStyle
-      .addBinding(parameters.spellName, "alignment")
+      .addBinding(parameters.generalSpellStyle, "alignment", {
+        options: {
+          none: "match-parent",
+          left: "left",
+          right: "right",
+          center: "center",
+        },
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
-          spellName: { ...parameters.spellName, alignment: v.value },
-        });
-      });
-    folderGeneralStyle
-      .addBinding(parameters.spellName, "textShadow")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          spellName: { ...parameters.spellName, textShadow: v.value },
+          generalSpellStyle: {
+            ...parameters.generalSpellStyle,
+            alignment: v.value,
+          },
         });
       });
 
@@ -299,7 +468,11 @@ export default function SpellCardPane() {
         });
       });
     subfolderSpellName
-      .addBinding(parameters.spellName, "fontSize")
+      .addBinding(parameters.spellName, "fontSize", {
+        step: 1,
+        min: 0,
+        max: 50,
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
@@ -315,7 +488,14 @@ export default function SpellCardPane() {
         });
       });
     subfolderSpellName
-      .addBinding(parameters.spellName, "alignment")
+      .addBinding(parameters.spellName, "alignment", {
+        options: {
+          none: "match-parent",
+          left: "left",
+          right: "right",
+          center: "center",
+        },
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
@@ -323,11 +503,15 @@ export default function SpellCardPane() {
         });
       });
     subfolderSpellName
-      .addBinding(parameters.spellName, "textShadow")
+      .addBinding(parameters.spellName, "offset", {
+        step: 1,
+        min: -300,
+        max: 300,
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
-          spellName: { ...parameters.spellName, textShadow: v.value },
+          spellName: { ...parameters.spellName, offset: v.value },
         });
       });
 
@@ -357,7 +541,11 @@ export default function SpellCardPane() {
         });
       });
     subfolderSpellLevel
-      .addBinding(parameters.spellLevel, "fontSize")
+      .addBinding(parameters.spellLevel, "fontSize", {
+        step: 1,
+        min: 0,
+        max: 50,
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
@@ -373,7 +561,14 @@ export default function SpellCardPane() {
         });
       });
     subfolderSpellLevel
-      .addBinding(parameters.spellLevel, "alignment")
+      .addBinding(parameters.spellLevel, "alignment", {
+        options: {
+          none: "match-parent",
+          left: "left",
+          right: "right",
+          center: "center",
+        },
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
@@ -381,11 +576,15 @@ export default function SpellCardPane() {
         });
       });
     subfolderSpellLevel
-      .addBinding(parameters.spellLevel, "textShadow")
+      .addBinding(parameters.spellLevel, "offset", {
+        step: 1,
+        min: -300,
+        max: 300,
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
-          spellLevel: { ...parameters.spellLevel, textShadow: v.value },
+          spellLevel: { ...parameters.spellLevel, offset: v.value },
         });
       });
 
@@ -415,7 +614,11 @@ export default function SpellCardPane() {
         });
       });
     subfolderSchoolOfMagic
-      .addBinding(parameters.schoolOfMagic, "fontSize")
+      .addBinding(parameters.schoolOfMagic, "fontSize", {
+        step: 1,
+        min: 0,
+        max: 50,
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
@@ -431,7 +634,14 @@ export default function SpellCardPane() {
         });
       });
     subfolderSchoolOfMagic
-      .addBinding(parameters.schoolOfMagic, "alignment")
+      .addBinding(parameters.schoolOfMagic, "alignment", {
+        options: {
+          none: "match-parent",
+          left: "left",
+          right: "right",
+          center: "center",
+        },
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
@@ -439,11 +649,15 @@ export default function SpellCardPane() {
         });
       });
     subfolderSchoolOfMagic
-      .addBinding(parameters.schoolOfMagic, "textShadow")
+      .addBinding(parameters.schoolOfMagic, "offset", {
+        step: 1,
+        min: -300,
+        max: 300,
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
-          schoolOfMagic: { ...parameters.schoolOfMagic, textShadow: v.value },
+          schoolOfMagic: { ...parameters.schoolOfMagic, offset: v.value },
         });
       });
 
@@ -473,7 +687,11 @@ export default function SpellCardPane() {
         });
       });
     subfolderCastingTime
-      .addBinding(parameters.castingTime, "fontSize")
+      .addBinding(parameters.castingTime, "fontSize", {
+        step: 1,
+        min: 0,
+        max: 50,
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
@@ -489,7 +707,14 @@ export default function SpellCardPane() {
         });
       });
     subfolderCastingTime
-      .addBinding(parameters.castingTime, "alignment")
+      .addBinding(parameters.castingTime, "alignment", {
+        options: {
+          none: "match-parent",
+          left: "left",
+          right: "right",
+          center: "center",
+        },
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
@@ -497,11 +722,15 @@ export default function SpellCardPane() {
         });
       });
     subfolderCastingTime
-      .addBinding(parameters.castingTime, "textShadow")
+      .addBinding(parameters.castingTime, "offset", {
+        step: 1,
+        min: -300,
+        max: 300,
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
-          castingTime: { ...parameters.castingTime, textShadow: v.value },
+          castingTime: { ...parameters.castingTime, offset: v.value },
         });
       });
 
@@ -529,7 +758,11 @@ export default function SpellCardPane() {
         });
       });
     subfolderRange
-      .addBinding(parameters.range, "fontSize")
+      .addBinding(parameters.range, "fontSize", {
+        step: 1,
+        min: 0,
+        max: 50,
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
@@ -543,7 +776,14 @@ export default function SpellCardPane() {
       });
     });
     subfolderRange
-      .addBinding(parameters.range, "alignment")
+      .addBinding(parameters.range, "alignment", {
+        options: {
+          none: "match-parent",
+          left: "left",
+          right: "right",
+          center: "center",
+        },
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
@@ -551,11 +791,15 @@ export default function SpellCardPane() {
         });
       });
     subfolderRange
-      .addBinding(parameters.range, "textShadow")
+      .addBinding(parameters.range, "offset", {
+        step: 1,
+        min: -300,
+        max: 300,
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
-          range: { ...parameters.range, textShadow: v.value },
+          range: { ...parameters.range, offset: v.value },
         });
       });
 
@@ -585,7 +829,11 @@ export default function SpellCardPane() {
         });
       });
     subfolderComponents
-      .addBinding(parameters.components, "fontSize")
+      .addBinding(parameters.components, "fontSize", {
+        step: 1,
+        min: 0,
+        max: 50,
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
@@ -601,7 +849,14 @@ export default function SpellCardPane() {
         });
       });
     subfolderComponents
-      .addBinding(parameters.components, "alignment")
+      .addBinding(parameters.components, "alignment", {
+        options: {
+          none: "match-parent",
+          left: "left",
+          right: "right",
+          center: "center",
+        },
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
@@ -609,11 +864,15 @@ export default function SpellCardPane() {
         });
       });
     subfolderComponents
-      .addBinding(parameters.components, "textShadow")
+      .addBinding(parameters.components, "offset", {
+        step: 1,
+        min: -300,
+        max: 300,
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
-          components: { ...parameters.components, textShadow: v.value },
+          components: { ...parameters.components, offset: v.value },
         });
       });
 
@@ -641,7 +900,11 @@ export default function SpellCardPane() {
         });
       });
     subfolderDuration
-      .addBinding(parameters.duration, "fontSize")
+      .addBinding(parameters.duration, "fontSize", {
+        step: 1,
+        min: 0,
+        max: 50,
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
@@ -657,19 +920,31 @@ export default function SpellCardPane() {
         });
       });
     subfolderDuration
-      .addBinding(parameters.duration, "alignment")
+      .addBinding(parameters.duration, "alignment", {
+        options: {
+          none: "match-parent",
+          left: "left",
+          right: "right",
+          center: "center",
+        },
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
           duration: { ...parameters.duration, alignment: v.value },
         });
       });
+
     subfolderDuration
-      .addBinding(parameters.duration, "textShadow")
+      .addBinding(parameters.duration, "offset", {
+        step: 1,
+        min: -300,
+        max: 300,
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
-          duration: { ...parameters.duration, textShadow: v.value },
+          duration: { ...parameters.duration, offset: v.value },
         });
       });
 
@@ -706,7 +981,11 @@ export default function SpellCardPane() {
         });
       });
     subfolderSpellDescription
-      .addBinding(parameters.spellDescription, "fontSize")
+      .addBinding(parameters.spellDescription, "fontSize", {
+        step: 1,
+        min: 0,
+        max: 50,
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
@@ -725,7 +1004,14 @@ export default function SpellCardPane() {
         });
       });
     subfolderSpellDescription
-      .addBinding(parameters.spellDescription, "alignment")
+      .addBinding(parameters.spellDescription, "alignment", {
+        options: {
+          none: "match-parent",
+          left: "left",
+          right: "right",
+          center: "center",
+        },
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
@@ -736,14 +1022,15 @@ export default function SpellCardPane() {
         });
       });
     subfolderSpellDescription
-      .addBinding(parameters.spellDescription, "textShadow")
+      .addBinding(parameters.spellDescription, "offset", {
+        step: 1,
+        min: -300,
+        max: 300,
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
-          spellDescription: {
-            ...parameters.spellDescription,
-            textShadow: v.value,
-          },
+          spellDescription: { ...parameters.spellDescription, offset: v.value },
         });
       });
 
@@ -776,7 +1063,11 @@ export default function SpellCardPane() {
         });
       });
     subfolderAdditionalNotes
-      .addBinding(parameters.additionalNotes, "fontSize")
+      .addBinding(parameters.additionalNotes, "fontSize", {
+        step: 1,
+        min: 0,
+        max: 50,
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
@@ -803,14 +1094,83 @@ export default function SpellCardPane() {
         });
       });
     subfolderAdditionalNotes
-      .addBinding(parameters.additionalNotes, "textShadow")
+      .addBinding(parameters.additionalNotes, "offset", {
+        step: 1,
+        min: -300,
+        max: 300,
+      })
       .on("change", (v) => {
         setParameters({
           ...parameters,
-          additionalNotes: {
-            ...parameters.additionalNotes,
-            textShadow: v.value,
+          additionalNotes: { ...parameters.additionalNotes, offset: v.value },
+        });
+      });
+
+    // Class
+    // ####################################################################################################################
+
+    folderClass.addBinding(parameters.class, "text").on("change", (v) => {
+      setParameters({
+        ...parameters,
+        class: { ...parameters.class, text: v.value },
+      });
+    });
+
+    const subfolderClass = folderClass.addFolder({
+      title: subFolderName,
+      expanded: false,
+    });
+
+    subfolderClass
+      .addBinding(parameters.class, "fontStyle")
+      .on("change", (v) => {
+        setParameters({
+          ...parameters,
+          class: {
+            ...parameters.class,
+            fontStyle: v.value,
           },
+        });
+      });
+    subfolderClass
+      .addBinding(parameters.class, "fontSize", {
+        step: 1,
+        min: 0,
+        max: 50,
+      })
+      .on("change", (v) => {
+        setParameters({
+          ...parameters,
+          class: { ...parameters.class, fontSize: v.value },
+        });
+      });
+    subfolderClass.addBinding(parameters.class, "color").on("change", (v) => {
+      setParameters({
+        ...parameters,
+        class: { ...parameters.class, color: v.value },
+      });
+    });
+    subfolderClass
+      .addBinding(parameters.class, "alignment")
+      .on("change", (v) => {
+        setParameters({
+          ...parameters,
+          class: {
+            ...parameters.class,
+            alignment: v.value,
+          },
+        });
+      });
+    subfolderClass
+      .addBinding(parameters.class, "offset", {
+        step: 1,
+        min: -300,
+        max: 300,
+      })
+      .on("change", (v) => {
+        setParameters({
+          ...parameters,
+          class: { ...parameters.class, offset: v.value },
         });
       });
   }, []);

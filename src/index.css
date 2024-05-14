@@ -39,17 +39,34 @@
     --tp-monitor-foreground-color: hsla(0, 0%, 100%, 0.3);
 
     --tp-container-unit-size: 24px;
+    --tp-container-unit-spacing: 12px;
     --tp-blade-value-width: 50%;
   }
 
   @media (prefers-color-scheme: dark) {
     :root {
-      --background: 0, 0%, 0%;
+      --background: 230, 7%, 10%;
       --foreground: 219, 83%, 95%;
       --accent: 124, 94%, 74%;
       --accent2: 124, 94%, 74%;
     }
   }
+}
+
+.interface-bg {
+  background-image: radial-gradient(
+      hsla(var(--seafoam), 0.08) 1px,
+      transparent 0
+    ),
+    radial-gradient(hsla(var(--seafoam), 0.04) 1px, transparent 0);
+  background-size:
+    32px 32px,
+    8px 8px;
+  background-position: center;
+  flex: 2;
+  padding: 32px;
+  text-align: center;
+  min-height: 100%;
 }
 
 :root {
@@ -58,7 +75,7 @@
   font-weight: 400;
 
   color: var(--foreground);
-  background-color: var(--background);
+  background-color: hsl(var(--background));
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -78,18 +95,10 @@ a:hover {
 body {
   margin: 0;
   padding: 0;
-  /* display: flex; */
-  /* place-items: center; */
   min-height: 100vh;
 }
 
 .card-face {
-  margin: 5ch;
-  border: solid 1px black;
-  /* height: 88mm; */
-  /* width: 63mm; */
-  /* 88mm/10 * (96 / 2.54) */
-  /* aspect-ratio: 63/88; */
 }
 
 .spellcard-pane .tp-p2dv_b {

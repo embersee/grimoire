@@ -7,12 +7,26 @@ type Parameters = {
     borderStyle: string; // todo: later
     borderWidth: number;
     borderRadius: number;
+    topBorderWidth: number;
+    rightBorderWidth: number;
+    bottomBorderWidth: number;
+    leftBorderWidth: number;
   };
   background: {
     backgroundColor: string;
     backgroundImage: string; // maybe
     backgroundSize: string; // later
     backgroundPosition: string; // maybe
+  };
+  face: {
+    borderColor: string;
+    borderStyle: string;
+    borderWidth: number;
+    borderRadius: number;
+    size: { x: number; y: number };
+    backgroundColor: string;
+    color: string;
+    offset: { x: number; y: number };
   };
   cardLayout: {
     cardSize: {
@@ -43,7 +57,7 @@ type Parameters = {
     fontSize: number;
     color: string;
     alignment: string;
-    textShadow: boolean;
+    offset: { x: number; y: number };
     text: string;
   };
   spellLevel: {
@@ -51,7 +65,7 @@ type Parameters = {
     fontSize: number;
     color: string;
     alignment: string;
-    textShadow: boolean;
+    offset: { x: number; y: number };
     text: string;
   };
   schoolOfMagic: {
@@ -59,7 +73,7 @@ type Parameters = {
     fontSize: number;
     color: string;
     alignment: string;
-    textShadow: boolean;
+    offset: { x: number; y: number };
     text: string;
   };
   castingTime: {
@@ -67,7 +81,7 @@ type Parameters = {
     fontSize: number;
     color: string;
     alignment: string;
-    textShadow: boolean;
+    offset: { x: number; y: number };
     text: string;
   };
   range: {
@@ -75,7 +89,7 @@ type Parameters = {
     fontSize: number;
     color: string;
     alignment: string;
-    textShadow: boolean;
+    offset: { x: number; y: number };
     text: string;
   };
   components: {
@@ -83,7 +97,7 @@ type Parameters = {
     fontSize: number;
     color: string;
     alignment: string;
-    textShadow: boolean;
+    offset: { x: number; y: number };
     text: string;
   };
   duration: {
@@ -91,7 +105,7 @@ type Parameters = {
     fontSize: number;
     color: string;
     alignment: string;
-    textShadow: boolean;
+    offset: { x: number; y: number };
     text: string;
   };
   spellDescription: {
@@ -99,7 +113,7 @@ type Parameters = {
     fontSize: number;
     color: string;
     alignment: string;
-    textShadow: boolean;
+    offset: { x: number; y: number };
     text: string;
   };
   additionalNotes: {
@@ -107,7 +121,15 @@ type Parameters = {
     fontSize: number;
     color: string;
     alignment: string;
-    textShadow: boolean;
+    offset: { x: number; y: number };
+    text: string;
+  };
+  class: {
+    fontStyle: string;
+    fontSize: number;
+    color: string;
+    alignment: string;
+    offset: { x: number; y: number };
     text: string;
   };
   generalSpellStyle: {
@@ -115,7 +137,6 @@ type Parameters = {
     fontSize: number;
     color: string;
     alignment: string;
-    textShadow: boolean;
   };
 };
 
@@ -131,14 +152,28 @@ const useSpellCardStore = create<SpellCardState>((set) => ({
     border: {
       borderColor: "#000000",
       borderStyle: "solid",
-      borderWidth: 1,
-      borderRadius: 0,
+      borderWidth: 10,
+      borderRadius: 8,
+      topBorderWidth: 10,
+      rightBorderWidth: 10,
+      bottomBorderWidth: 26,
+      leftBorderWidth: 10,
     },
     background: {
       backgroundColor: "#FFFFFF",
       backgroundImage: "",
       backgroundSize: "cover",
       backgroundPosition: "center",
+    },
+    face: {
+      backgroundColor: "#a09393",
+      color: "#FFFFFF",
+      borderColor: "#000000",
+      borderStyle: "solid",
+      borderWidth: 3,
+      borderRadius: 4,
+      size: { x: 57.75, y: 78.5 },
+      offset: { x: 0, y: 0 },
     },
     cardLayout: {
       cardSize: { x: 63, y: 88 },
@@ -163,82 +198,90 @@ const useSpellCardStore = create<SpellCardState>((set) => ({
     },
     spellName: {
       fontStyle: "normal",
-      fontSize: 16,
+      fontSize: 18,
       color: "#000000",
       alignment: "left",
-      textShadow: false,
-      text: "Fireball",
+      offset: { x: 0, y: 0 },
+      text: "__Fireball__",
     },
     spellLevel: {
-      text: "example",
+      text: "Level",
       fontStyle: "normal",
       fontSize: 14,
       color: "#000000",
+      offset: { x: 0, y: 0 },
       alignment: "left",
-      textShadow: false,
     },
     schoolOfMagic: {
-      text: "example",
+      text: "School of Magic",
       fontStyle: "normal",
       fontSize: 14,
       color: "#000000",
+      offset: { x: 0, y: 0 },
       alignment: "left",
-      textShadow: false,
     },
     castingTime: {
-      text: "example",
+      text: "Casting Time",
       fontStyle: "normal",
       fontSize: 14,
       color: "#000000",
+      offset: { x: 0, y: 0 },
       alignment: "left",
-      textShadow: false,
     },
     range: {
-      text: "example",
+      text: "Range",
       fontStyle: "normal",
       fontSize: 14,
       color: "#000000",
+      offset: { x: 0, y: 0 },
       alignment: "left",
-      textShadow: false,
     },
     components: {
-      text: "example",
+      text: "V, S, M (components)",
       fontStyle: "normal",
       fontSize: 14,
       color: "#000000",
+      offset: { x: 0, y: 0 },
       alignment: "left",
-      textShadow: false,
     },
     duration: {
-      text: "example",
+      text: "1 round (duration)",
       fontStyle: "normal",
       fontSize: 14,
       color: "#000000",
+      offset: { x: 0, y: 0 },
       alignment: "left",
-      textShadow: false,
     },
     spellDescription: {
-      fontStyle: "normal",
-      fontSize: 14,
-      color: "#000000",
-      alignment: "left",
-      textShadow: false,
       text: "A bright streak flashes from your pointing finger to a point you choose within range then blossoms with a low roar into an explosion of flame. Each creature in a 20-foot radius sphere centered on that point must make a Dexterity saving throw. A target takes 8d6 fire damage on a failed save, or half as much damage on a successful one.",
+      fontStyle: "normal",
+      fontSize: 8,
+      color: "#000000",
+      offset: { x: 0, y: 0 },
+      alignment: "left",
     },
     additionalNotes: {
-      text: "example",
+      text: "__At Higher Levels:__ When you cast this spell using a spell slot of 4th level or higher, the damage increases by 1d6 for each slot level above 3rd.",
       fontStyle: "normal",
-      fontSize: 14,
+      fontSize: 8,
       color: "#000000",
+      offset: { x: 0, y: 0 },
       alignment: "left",
-      textShadow: false,
+    },
+    class: {
+      text: "Wizard",
+      fontStyle: "normal",
+      fontSize: 8,
+      color: "#000000",
+      offset: { x: 0, y: 0 },
+      alignment: "left",
     },
     generalSpellStyle: {
       fontStyle: "normal",
       fontSize: 14,
       color: "#000000",
+      offset: { x: 0, y: 0 },
       alignment: "left",
-      textShadow: false,
     },
   },
   setParameters: (newParameters: Partial<Parameters>) =>
