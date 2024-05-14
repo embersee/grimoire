@@ -5,16 +5,16 @@ const CardFace = () => {
   const { parameters } = useSpellCardStore();
 
   const params = [
-    parameters.spellName,
-    parameters.castingTime,
-    parameters.range,
-    parameters.components,
-    parameters.duration,
-    parameters.spellDescription,
-    parameters.additionalNotes,
-    parameters.spellLevel,
-    parameters.schoolOfMagic,
-    parameters.class,
+    { ...parameters.spellName, name: "Spell Name" },
+    { ...parameters.castingTime, name: "Casting Time" },
+    { ...parameters.range, name: "Range" },
+    { ...parameters.components, name: "Components" },
+    { ...parameters.duration, name: "Duration" },
+    { ...parameters.spellDescription, name: "Spell Description" },
+    { ...parameters.additionalNotes, name: "Additional Notes" },
+    { ...parameters.spellLevel, name: "Spell Level" },
+    { ...parameters.schoolOfMagic, name: "School of Magic" },
+    { ...parameters.class, name: "Class" },
   ];
 
   // Check if each border width is specified
@@ -48,7 +48,6 @@ const CardFace = () => {
         <div
           className="card-face"
           style={{
-            // border: `${parameters.border.borderWidth}px solid ${parameters.border.borderColor}`,
             borderStyle: "solid",
             borderColor: `${parameters.border.borderColor}`,
             borderWidth: `${topBorderWidth}px ${rightBorderWidth}px ${bottomBorderWidth}px ${leftBorderWidth}px`,
@@ -56,9 +55,6 @@ const CardFace = () => {
             borderRadius: `${parameters.border.borderRadius}px`,
             height: `${parameters.cardLayout.cardSize.y}mm`,
             width: `${parameters.cardLayout.cardSize.x}mm`,
-            fontSize: `${parameters.generalSpellStyle.fontSize}px`,
-            color: `${parameters.generalSpellStyle.color}`,
-            textAlign: parameters.generalSpellStyle.alignment as "center",
           }}
         >
           <div
@@ -69,7 +65,7 @@ const CardFace = () => {
               outline: `${parameters.face.borderWidth}px ${parameters.face.borderStyle} ${parameters.face.borderColor}`,
               borderRadius: `${parameters.face.borderRadius}px`,
               background: parameters.face.backgroundColor,
-              padding: `${parameters.cardLayout.padding}px ${parameters.cardLayout.padding}px`,
+              padding: `${parameters.face.padding}px ${parameters.face.padding}px`,
               translate:
                 `${parameters.face.offset.x}px ${parameters.face.offset.y}px` as "50% 50%",
             }}
@@ -80,12 +76,36 @@ const CardFace = () => {
                 style={{
                   fontSize: `${param.fontSize}px`,
                   color: `${param.color}`,
-                  textAlign: param.alignment as "center",
                   translate:
                     `${param.offset.x}px ${param.offset.y}px` as "50% 50%",
+                  borderBottom: `${param.underlineSize}px ${param.underlineStyle} ${param.underlineColor}`,
                 }}
               >
-                <Markdown>{param.text}</Markdown>
+                {param.legend ? (
+                  <fieldset
+                    style={{
+                      border: `${param.legendWidth}px solid ${param.legendColor}`,
+                      borderRadius: `${param.legendRadius}px`,
+                      width: `${param.legendSize}%`,
+                      padding: `0 ${param.legendPadding}px`,
+                    }}
+                  >
+                    <legend
+                      style={{
+                        fontSize: `${param.legendFontSize}px`,
+                        marginLeft: `${param.legendMargin}px`,
+                        padding: `0 ${param.legendPadding}px`,
+                      }}
+                    >
+                      <Markdown>{param.name}</Markdown>
+                    </legend>
+                    <label>
+                      <Markdown>{param.text}</Markdown>
+                    </label>
+                  </fieldset>
+                ) : (
+                  <Markdown>{param.text}</Markdown>
+                )}
               </div>
             ))}
           </div>

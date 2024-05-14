@@ -98,17 +98,6 @@ export default function SpellCardPane() {
         });
       });
     tabs.pages[facePageOrder]
-      .addBinding(parameters.face, "color")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          face: {
-            ...parameters.face,
-            color: v.value,
-          },
-        });
-      });
-    tabs.pages[facePageOrder]
       .addBinding(parameters.face, "backgroundColor")
       .on("change", (v) => {
         setParameters({
@@ -129,6 +118,18 @@ export default function SpellCardPane() {
         setParameters({
           ...parameters,
           face: { ...parameters.face, size: v.value },
+        });
+      });
+    tabs.pages[facePageOrder]
+      .addBinding(parameters.face, "padding", {
+        step: 1,
+        min: 0,
+        max: 50,
+      })
+      .on("change", (v) => {
+        setParameters({
+          ...parameters,
+          face: { ...parameters.face, padding: v.value },
         });
       });
 
@@ -294,18 +295,7 @@ export default function SpellCardPane() {
       });
 
     // Padding
-    tabs.pages[cardLayoutPageOrder]
-      .addBinding(parameters.cardLayout, "padding", {
-        step: 1,
-        min: 0,
-        max: 50,
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          cardLayout: { ...parameters.cardLayout, padding: v.value },
-        });
-      });
+    tabs.pages[cardLayoutPageOrder];
 
     // Icons/Graphics category
 
@@ -344,835 +334,152 @@ export default function SpellCardPane() {
     // Spell Details tabs
     const spellDetailsPageOrder = 0;
 
-    const folderGeneralStyle = tabs.pages[spellDetailsPageOrder].addFolder({
-      title: "General",
-    });
     const folderSpellName = tabs.pages[spellDetailsPageOrder].addFolder({
       title: "Spell Name",
     });
     const folderSpellLevel = tabs.pages[spellDetailsPageOrder].addFolder({
       title: "Spell Level",
-      expanded: false,
     });
     const folderSchoolOfMagic = tabs.pages[spellDetailsPageOrder].addFolder({
       title: "School of Magic",
-      expanded: false,
     });
     const folderCastingTime = tabs.pages[spellDetailsPageOrder].addFolder({
       title: "Casting Time",
-      expanded: false,
     });
     const folderRange = tabs.pages[spellDetailsPageOrder].addFolder({
       title: "Range",
-      expanded: false,
     });
     const folderComponents = tabs.pages[spellDetailsPageOrder].addFolder({
       title: "Components",
-      expanded: false,
     });
     const folderDuration = tabs.pages[spellDetailsPageOrder].addFolder({
       title: "Duration",
-      expanded: false,
     });
     const folderSpellDescription = tabs.pages[spellDetailsPageOrder].addFolder({
       title: "Spell Description",
-      expanded: false,
     });
     const folderClass = tabs.pages[spellDetailsPageOrder].addFolder({
       title: "Class",
-      expanded: false,
     });
     const folderAdditionalNotes = tabs.pages[spellDetailsPageOrder].addFolder({
       title: "AdditionalNotes",
-      expanded: false,
     });
 
-    // General Spell Style
-    // ####################################################################################################################
-    folderGeneralStyle
-      .addBinding(parameters.generalSpellStyle, "fontStyle")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          generalSpellStyle: {
-            ...parameters.generalSpellStyle,
-            fontStyle: v.value,
-          },
-        });
-      });
-    folderGeneralStyle
-      .addBinding(parameters.generalSpellStyle, "fontSize", {
-        step: 1,
-        min: 0,
-        max: 50,
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          generalSpellStyle: {
-            ...parameters.generalSpellStyle,
-            fontSize: v.value,
-          },
-        });
-      });
-    folderGeneralStyle
-      .addBinding(parameters.generalSpellStyle, "color")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          generalSpellStyle: {
-            ...parameters.generalSpellStyle,
-            color: v.value,
-          },
-        });
-      });
-    folderGeneralStyle
-      .addBinding(parameters.generalSpellStyle, "alignment", {
-        options: {
-          none: "match-parent",
-          left: "left",
-          right: "right",
-          center: "center",
-        },
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          generalSpellStyle: {
-            ...parameters.generalSpellStyle,
-            alignment: v.value,
-          },
-        });
+    const allIdentifiers = [
+      "spellName",
+      "spellLevel",
+      "schoolOfMagic",
+      "castingTime",
+      "range",
+      "components",
+      "duration",
+      "spellDescription",
+      "class",
+      "additionalNotes",
+    ] as const;
+
+    const allSpellFolders = [
+      folderSpellName,
+      folderSpellLevel,
+      folderSchoolOfMagic,
+      folderCastingTime,
+      folderRange,
+      folderComponents,
+      folderDuration,
+      folderSpellDescription,
+      folderClass,
+      folderAdditionalNotes,
+    ];
+
+    const allFields = ["text", "fontSize", "color"] as const;
+
+    const advancedFields = [
+      "offset",
+      "fontStyle",
+      "underlineSize",
+      "underlineStyle",
+      "underlineColor",
+    ] as const;
+
+    const legendFields = [
+      "legend",
+      "legendPadding",
+      "legendMargin",
+      "legendColor",
+      "legendWidth",
+      "legendSize",
+      "legendFontSize",
+      "legendRadius",
+    ] as const;
+
+    allSpellFolders.forEach((folder, index) => {
+      allFields.forEach((field) => {
+        const identifier = allIdentifiers[index];
+
+        folder
+          .addBinding(parameters[identifier], field, {
+            step: 1,
+            min: 0,
+            max: 100,
+          })
+          .on("change", (v) => {
+            setParameters({
+              ...parameters,
+              [identifier]: { ...parameters[identifier], [field]: v.value },
+            });
+          });
       });
 
-    // Spell Name
-    // ####################################################################################################################
-    folderSpellName
-      .addBinding(parameters.spellName, "text")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          spellName: { ...parameters.spellName, text: v.value },
-        });
-      });
-    const subfolderSpellName = folderSpellName.addFolder({
-      title: subFolderName,
-      expanded: false,
-    });
-    subfolderSpellName
-      .addBinding(parameters.spellName, "fontStyle")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          spellName: { ...parameters.spellName, fontStyle: v.value },
-        });
-      });
-    subfolderSpellName
-      .addBinding(parameters.spellName, "fontSize", {
-        step: 1,
-        min: 0,
-        max: 50,
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          spellName: { ...parameters.spellName, fontSize: v.value },
-        });
-      });
-    subfolderSpellName
-      .addBinding(parameters.spellName, "color")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          spellName: { ...parameters.spellName, color: v.value },
-        });
-      });
-    subfolderSpellName
-      .addBinding(parameters.spellName, "alignment", {
-        options: {
-          none: "match-parent",
-          left: "left",
-          right: "right",
-          center: "center",
-        },
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          spellName: { ...parameters.spellName, alignment: v.value },
-        });
-      });
-    subfolderSpellName
-      .addBinding(parameters.spellName, "offset", {
-        step: 1,
-        min: -300,
-        max: 300,
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          spellName: { ...parameters.spellName, offset: v.value },
-        });
+      const subfolder = folder.addFolder({
+        title: subFolderName,
+        expanded: false,
       });
 
-    // Spell Level
-    // ####################################################################################################################
-
-    folderSpellLevel
-      .addBinding(parameters.spellLevel, "text")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          spellLevel: { ...parameters.spellLevel, text: v.value },
-        });
+      advancedFields.forEach((field) => {
+        const advancedIdentifier = allIdentifiers[index];
+        subfolder
+          .addBinding(parameters[advancedIdentifier], field, {
+            step: 1,
+            min: 0,
+            max: 100,
+            x: { step: 1, min: -300, max: 300 },
+            y: { step: 1, min: -300, max: 300 },
+          })
+          .on("change", (v) => {
+            setParameters({
+              ...parameters,
+              [advancedIdentifier]: {
+                ...parameters[advancedIdentifier],
+                [field]: v.value,
+              },
+            });
+          });
       });
 
-    const subfolderSpellLevel = folderSpellLevel.addFolder({
-      title: subFolderName,
-      expanded: false,
-    });
-
-    subfolderSpellLevel
-      .addBinding(parameters.spellLevel, "fontStyle")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          spellLevel: { ...parameters.spellLevel, fontStyle: v.value },
-        });
-      });
-    subfolderSpellLevel
-      .addBinding(parameters.spellLevel, "fontSize", {
-        step: 1,
-        min: 0,
-        max: 50,
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          spellLevel: { ...parameters.spellLevel, fontSize: v.value },
-        });
-      });
-    subfolderSpellLevel
-      .addBinding(parameters.spellLevel, "color")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          spellLevel: { ...parameters.spellLevel, color: v.value },
-        });
-      });
-    subfolderSpellLevel
-      .addBinding(parameters.spellLevel, "alignment", {
-        options: {
-          none: "match-parent",
-          left: "left",
-          right: "right",
-          center: "center",
-        },
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          spellLevel: { ...parameters.spellLevel, alignment: v.value },
-        });
-      });
-    subfolderSpellLevel
-      .addBinding(parameters.spellLevel, "offset", {
-        step: 1,
-        min: -300,
-        max: 300,
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          spellLevel: { ...parameters.spellLevel, offset: v.value },
-        });
+      const legendFolder = subfolder.addFolder({
+        title: "Legend",
+        expanded: false,
       });
 
-    // School of Magic
-    // ####################################################################################################################
-
-    folderSchoolOfMagic
-      .addBinding(parameters.schoolOfMagic, "text")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          schoolOfMagic: { ...parameters.schoolOfMagic, text: v.value },
-        });
-      });
-
-    const subfolderSchoolOfMagic = folderSchoolOfMagic.addFolder({
-      title: subFolderName,
-      expanded: false,
-    });
-
-    subfolderSchoolOfMagic
-      .addBinding(parameters.schoolOfMagic, "fontStyle")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          schoolOfMagic: { ...parameters.schoolOfMagic, fontStyle: v.value },
-        });
-      });
-    subfolderSchoolOfMagic
-      .addBinding(parameters.schoolOfMagic, "fontSize", {
-        step: 1,
-        min: 0,
-        max: 50,
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          schoolOfMagic: { ...parameters.schoolOfMagic, fontSize: v.value },
-        });
-      });
-    subfolderSchoolOfMagic
-      .addBinding(parameters.schoolOfMagic, "color")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          schoolOfMagic: { ...parameters.schoolOfMagic, color: v.value },
-        });
-      });
-    subfolderSchoolOfMagic
-      .addBinding(parameters.schoolOfMagic, "alignment", {
-        options: {
-          none: "match-parent",
-          left: "left",
-          right: "right",
-          center: "center",
-        },
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          schoolOfMagic: { ...parameters.schoolOfMagic, alignment: v.value },
-        });
-      });
-    subfolderSchoolOfMagic
-      .addBinding(parameters.schoolOfMagic, "offset", {
-        step: 1,
-        min: -300,
-        max: 300,
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          schoolOfMagic: { ...parameters.schoolOfMagic, offset: v.value },
-        });
-      });
-
-    // School of Magic
-    // ####################################################################################################################
-
-    folderCastingTime
-      .addBinding(parameters.castingTime, "text")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          castingTime: { ...parameters.castingTime, text: v.value },
-        });
-      });
-
-    const subfolderCastingTime = folderCastingTime.addFolder({
-      title: subFolderName,
-      expanded: false,
-    });
-
-    subfolderCastingTime
-      .addBinding(parameters.castingTime, "fontStyle")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          castingTime: { ...parameters.castingTime, fontStyle: v.value },
-        });
-      });
-    subfolderCastingTime
-      .addBinding(parameters.castingTime, "fontSize", {
-        step: 1,
-        min: 0,
-        max: 50,
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          castingTime: { ...parameters.castingTime, fontSize: v.value },
-        });
-      });
-    subfolderCastingTime
-      .addBinding(parameters.castingTime, "color")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          castingTime: { ...parameters.castingTime, color: v.value },
-        });
-      });
-    subfolderCastingTime
-      .addBinding(parameters.castingTime, "alignment", {
-        options: {
-          none: "match-parent",
-          left: "left",
-          right: "right",
-          center: "center",
-        },
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          castingTime: { ...parameters.castingTime, alignment: v.value },
-        });
-      });
-    subfolderCastingTime
-      .addBinding(parameters.castingTime, "offset", {
-        step: 1,
-        min: -300,
-        max: 300,
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          castingTime: { ...parameters.castingTime, offset: v.value },
-        });
-      });
-
-    // Range
-    // ####################################################################################################################
-
-    folderRange.addBinding(parameters.range, "text").on("change", (v) => {
-      setParameters({
-        ...parameters,
-        range: { ...parameters.range, text: v.value },
+      legendFields.forEach((field) => {
+        const advancedIdentifier = allIdentifiers[index];
+        legendFolder
+          .addBinding(parameters[advancedIdentifier], field, {
+            step: 1,
+            min: 0,
+            max: 100,
+          })
+          .on("change", (v) => {
+            setParameters({
+              ...parameters,
+              [advancedIdentifier]: {
+                ...parameters[advancedIdentifier],
+                [field]: v.value,
+              },
+            });
+          });
       });
     });
-
-    const subfolderRange = folderRange.addFolder({
-      title: subFolderName,
-      expanded: false,
-    });
-
-    subfolderRange
-      .addBinding(parameters.range, "fontStyle")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          range: { ...parameters.range, fontStyle: v.value },
-        });
-      });
-    subfolderRange
-      .addBinding(parameters.range, "fontSize", {
-        step: 1,
-        min: 0,
-        max: 50,
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          range: { ...parameters.range, fontSize: v.value },
-        });
-      });
-    subfolderRange.addBinding(parameters.range, "color").on("change", (v) => {
-      setParameters({
-        ...parameters,
-        range: { ...parameters.range, color: v.value },
-      });
-    });
-    subfolderRange
-      .addBinding(parameters.range, "alignment", {
-        options: {
-          none: "match-parent",
-          left: "left",
-          right: "right",
-          center: "center",
-        },
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          range: { ...parameters.range, alignment: v.value },
-        });
-      });
-    subfolderRange
-      .addBinding(parameters.range, "offset", {
-        step: 1,
-        min: -300,
-        max: 300,
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          range: { ...parameters.range, offset: v.value },
-        });
-      });
-
-    // Components
-    // ####################################################################################################################
-
-    folderComponents
-      .addBinding(parameters.components, "text")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          components: { ...parameters.components, text: v.value },
-        });
-      });
-
-    const subfolderComponents = folderComponents.addFolder({
-      title: subFolderName,
-      expanded: false,
-    });
-
-    subfolderComponents
-      .addBinding(parameters.components, "fontStyle")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          components: { ...parameters.components, fontStyle: v.value },
-        });
-      });
-    subfolderComponents
-      .addBinding(parameters.components, "fontSize", {
-        step: 1,
-        min: 0,
-        max: 50,
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          components: { ...parameters.components, fontSize: v.value },
-        });
-      });
-    subfolderComponents
-      .addBinding(parameters.components, "color")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          components: { ...parameters.components, color: v.value },
-        });
-      });
-    subfolderComponents
-      .addBinding(parameters.components, "alignment", {
-        options: {
-          none: "match-parent",
-          left: "left",
-          right: "right",
-          center: "center",
-        },
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          components: { ...parameters.components, alignment: v.value },
-        });
-      });
-    subfolderComponents
-      .addBinding(parameters.components, "offset", {
-        step: 1,
-        min: -300,
-        max: 300,
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          components: { ...parameters.components, offset: v.value },
-        });
-      });
-
-    // Duration
-    // ####################################################################################################################
-
-    folderDuration.addBinding(parameters.duration, "text").on("change", (v) => {
-      setParameters({
-        ...parameters,
-        duration: { ...parameters.duration, text: v.value },
-      });
-    });
-
-    const subfolderDuration = folderDuration.addFolder({
-      title: subFolderName,
-      expanded: false,
-    });
-
-    subfolderDuration
-      .addBinding(parameters.duration, "fontStyle")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          duration: { ...parameters.duration, fontStyle: v.value },
-        });
-      });
-    subfolderDuration
-      .addBinding(parameters.duration, "fontSize", {
-        step: 1,
-        min: 0,
-        max: 50,
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          duration: { ...parameters.duration, fontSize: v.value },
-        });
-      });
-    subfolderDuration
-      .addBinding(parameters.duration, "color")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          duration: { ...parameters.duration, color: v.value },
-        });
-      });
-    subfolderDuration
-      .addBinding(parameters.duration, "alignment", {
-        options: {
-          none: "match-parent",
-          left: "left",
-          right: "right",
-          center: "center",
-        },
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          duration: { ...parameters.duration, alignment: v.value },
-        });
-      });
-
-    subfolderDuration
-      .addBinding(parameters.duration, "offset", {
-        step: 1,
-        min: -300,
-        max: 300,
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          duration: { ...parameters.duration, offset: v.value },
-        });
-      });
-
-    // Spell Description
-    // ####################################################################################################################
-
-    folderSpellDescription
-      .addBinding(parameters.spellDescription, "text", {
-        view: "textarea",
-        rows: 6,
-        placeholder: "Type here...",
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          spellDescription: { ...parameters.spellDescription, text: v.value },
-        });
-      });
-
-    const subfolderSpellDescription = folderSpellDescription.addFolder({
-      title: subFolderName,
-      expanded: false,
-    });
-
-    subfolderSpellDescription
-      .addBinding(parameters.spellDescription, "fontStyle")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          spellDescription: {
-            ...parameters.spellDescription,
-            fontStyle: v.value,
-          },
-        });
-      });
-    subfolderSpellDescription
-      .addBinding(parameters.spellDescription, "fontSize", {
-        step: 1,
-        min: 0,
-        max: 50,
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          spellDescription: {
-            ...parameters.spellDescription,
-            fontSize: v.value,
-          },
-        });
-      });
-    subfolderSpellDescription
-      .addBinding(parameters.spellDescription, "color")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          spellDescription: { ...parameters.spellDescription, color: v.value },
-        });
-      });
-    subfolderSpellDescription
-      .addBinding(parameters.spellDescription, "alignment", {
-        options: {
-          none: "match-parent",
-          left: "left",
-          right: "right",
-          center: "center",
-        },
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          spellDescription: {
-            ...parameters.spellDescription,
-            alignment: v.value,
-          },
-        });
-      });
-    subfolderSpellDescription
-      .addBinding(parameters.spellDescription, "offset", {
-        step: 1,
-        min: -300,
-        max: 300,
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          spellDescription: { ...parameters.spellDescription, offset: v.value },
-        });
-      });
-
-    // Additional Notes
-    // ####################################################################################################################
-
-    folderAdditionalNotes
-      .addBinding(parameters.additionalNotes, "text")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          additionalNotes: { ...parameters.additionalNotes, text: v.value },
-        });
-      });
-
-    const subfolderAdditionalNotes = folderAdditionalNotes.addFolder({
-      title: subFolderName,
-      expanded: false,
-    });
-
-    subfolderAdditionalNotes
-      .addBinding(parameters.additionalNotes, "fontStyle")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          additionalNotes: {
-            ...parameters.additionalNotes,
-            fontStyle: v.value,
-          },
-        });
-      });
-    subfolderAdditionalNotes
-      .addBinding(parameters.additionalNotes, "fontSize", {
-        step: 1,
-        min: 0,
-        max: 50,
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          additionalNotes: { ...parameters.additionalNotes, fontSize: v.value },
-        });
-      });
-    subfolderAdditionalNotes
-      .addBinding(parameters.additionalNotes, "color")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          additionalNotes: { ...parameters.additionalNotes, color: v.value },
-        });
-      });
-    subfolderAdditionalNotes
-      .addBinding(parameters.additionalNotes, "alignment")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          additionalNotes: {
-            ...parameters.additionalNotes,
-            alignment: v.value,
-          },
-        });
-      });
-    subfolderAdditionalNotes
-      .addBinding(parameters.additionalNotes, "offset", {
-        step: 1,
-        min: -300,
-        max: 300,
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          additionalNotes: { ...parameters.additionalNotes, offset: v.value },
-        });
-      });
-
-    // Class
-    // ####################################################################################################################
-
-    folderClass.addBinding(parameters.class, "text").on("change", (v) => {
-      setParameters({
-        ...parameters,
-        class: { ...parameters.class, text: v.value },
-      });
-    });
-
-    const subfolderClass = folderClass.addFolder({
-      title: subFolderName,
-      expanded: false,
-    });
-
-    subfolderClass
-      .addBinding(parameters.class, "fontStyle")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          class: {
-            ...parameters.class,
-            fontStyle: v.value,
-          },
-        });
-      });
-    subfolderClass
-      .addBinding(parameters.class, "fontSize", {
-        step: 1,
-        min: 0,
-        max: 50,
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          class: { ...parameters.class, fontSize: v.value },
-        });
-      });
-    subfolderClass.addBinding(parameters.class, "color").on("change", (v) => {
-      setParameters({
-        ...parameters,
-        class: { ...parameters.class, color: v.value },
-      });
-    });
-    subfolderClass
-      .addBinding(parameters.class, "alignment")
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          class: {
-            ...parameters.class,
-            alignment: v.value,
-          },
-        });
-      });
-    subfolderClass
-      .addBinding(parameters.class, "offset", {
-        step: 1,
-        min: -300,
-        max: 300,
-      })
-      .on("change", (v) => {
-        setParameters({
-          ...parameters,
-          class: { ...parameters.class, offset: v.value },
-        });
-      });
   }, []);
 
   return <div className="spellcard-pane" ref={paneRef}></div>;

@@ -38,6 +38,8 @@
     --tp-monitor-background-color: hsla(0, 0%, 0%, 0.3);
     --tp-monitor-foreground-color: hsla(0, 0%, 100%, 0.3);
 
+    --tp-container-vertical-padding: 10px;
+
     --tp-container-unit-size: 24px;
     --tp-container-unit-spacing: 12px;
     --tp-blade-value-width: 50%;
@@ -65,7 +67,6 @@
   background-position: center;
   flex: 2;
   padding: 32px;
-  text-align: center;
   min-height: 100%;
 }
 
@@ -101,8 +102,28 @@ body {
 .card-face {
 }
 
+.config-pane {
+  height: 100vh;
+  min-width: 600px;
+  overflow-y: scroll;
+}
+
+.spellcard-config-pane {
+}
+
+/* adjusting panel config */
 .spellcard-pane .tp-p2dv_b {
   display: none;
+}
+
+/* folder tab text */
+.spellcard-pane .tp-fldv_t {
+  font-size: 12px;
+}
+
+/* folder */
+.spellcard-pane .tp-fldv_b {
+  margin-top: 10px;
 }
 
 /* * {
